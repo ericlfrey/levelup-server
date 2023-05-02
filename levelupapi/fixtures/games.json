@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "gamer": 1,
-      "type": 1,
+      "game_type": 1,
       "maker": "Beanicus",
       "title": "Who Stole All the Beans?",
       "number_of_players": 4,
@@ -16,7 +16,7 @@
     "pk": 2,
     "fields": {
       "gamer": 1,
-      "type": 2,
+      "game_type": 2,
       "maker": "Game Maker",
       "title": "The Mole Hunters",
       "number_of_players": 4,
