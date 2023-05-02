@@ -5,7 +5,7 @@ class Game(models.Model):
 
     gamer = models.ForeignKey(
         "Gamer", on_delete=models.CASCADE, related_name='games')
-    type = models.ForeignKey(
+    game_type = models.ForeignKey(
         "GameType", on_delete=models.CASCADE, related_name='games')
     maker = models.CharField(max_length=50)
     title = models.CharField(max_length=50)
