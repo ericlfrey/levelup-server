@@ -23,25 +23,13 @@ class EventView(ViewSet):
         Returns:
             Response -- JSON serialized list of event types
         """
+
         events = Event.objects.all()
+        if "organizer" in request.query_params:
+            events = events.filter(
+                organizer_id=request.query_params['organizer'])
         serializer = EventSerializer(events, many=True)
         return Response(serializer.data)
-
-        # service_tickets = []
-  #
-  #
-        # if request.auth.user.is_staff:
-        # service_tickets = ServiceTicket.objects.all()
-        #
-        # if "status" in request.query_params:
-        # if request.query_params['status'] == "done":
-        # service_tickets = service_tickets.filter(date_completed__isnull=False)
-        #
-        # else:
-        # service_tickets = ServiceTicket.objects.filter(customer__user=request.auth.user)
-        #
-        # serialized = ServiceTicketSerializer(service_tickets, many=True)
-        # return Response(serializederialized.data, status=status.HTTP_200_OK)
 
 
 class EventSerializer(serializers.ModelSerializer):
