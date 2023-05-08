@@ -16,7 +16,8 @@ class GameView(ViewSet):
             Response -- JSON serialized game type
         """
         try:
-            game = Game.objects.get(pk=pk)
+            game = Game.objects.annotate(
+                event_count=Count('events')).get(pk=pk)
             serializer = GameSerializer(game)
             return Response(serializer.data)
         except Game.DoesNotExist as ex:
@@ -71,13 +72,16 @@ class GameView(ViewSet):
 
         game_type = GameType.objects.get(pk=request.data["game_type"])
         game.game_type = game_type
-        # gamer = Gamer.objects.get(user=request.auth.user)
-        # game.gamer = gamer
         game.save()
 
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, pk):
+        """Handle DELETE requests for a game
+
+        Returns:
+            Response -- Empty body with 204 status code
+        """
         game = Game.objects.get(pk=pk)
         game.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
