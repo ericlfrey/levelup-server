@@ -16,7 +16,8 @@ class GameView(ViewSet):
             Response -- JSON serialized game type
         """
         try:
-            game = Game.objects.get(pk=pk)
+            game = Game.objects.annotate(
+                event_count=Count('events')).get(pk=pk)
             serializer = GameSerializer(game)
             return Response(serializer.data)
         except Game.DoesNotExist as ex:
