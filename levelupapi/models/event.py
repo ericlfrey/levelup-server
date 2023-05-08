@@ -7,9 +7,9 @@ class Event(models.Model):
     organizer = models.ForeignKey(
         "Gamer", on_delete=models.CASCADE, related_name='organized_events')
     game = models.ForeignKey(
-        "Game", on_delete=models.CASCADE, related_name='organized_events', default=1)
+        "Game", on_delete=models.CASCADE, related_name='events')
     description = models.CharField(max_length=100)
-    date = models.DateField()
+    date = models.DateField(auto_now=False, auto_now_add=False)
     time = models.TimeField()
     attendees = models.ManyToManyField(Gamer, related_name="events")
 
