@@ -1,5 +1,6 @@
 """View module for handling requests about event types"""
 from django.http import HttpResponseServerError
+from django.db.models import Count
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -16,7 +17,8 @@ class EventView(ViewSet):
             Response -- JSON serialized event type
         """
         try:
-            event = Event.objects.get(pk=pk)
+            event = Event.objects.annotate(
+                attendees_count=Count('attendees')).get(pk=pk)
             serializer = EventSerializer(event)
             return Response(serializer.data)
         except Event.DoesNotExist as ex:
@@ -28,7 +30,7 @@ class EventView(ViewSet):
             Response -- JSON serialized list of event types
         """
 
-        events = Event.objects.all()
+        events = Event.objects.annotate(attendees_count=Count('attendees'))
         if "game" in request.query_params:
             events = events.filter(
                 game_id=request.query_params['game'])
@@ -104,6 +106,8 @@ class EventView(ViewSet):
 class EventSerializer(serializers.ModelSerializer):
     """JSON serializer for event types
     """
+    attendees_count = serializers.IntegerField(default=None)
+
     class Meta:
         model = Event
         fields = (
@@ -114,6 +118,7 @@ class EventSerializer(serializers.ModelSerializer):
             'date',
             'time',
             'attendees',
-            'joined'
+            'joined',
+            'attendees_count'
         )
         depth = 1
