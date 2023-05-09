@@ -1,6 +1,6 @@
 """View module for handling requests about game types"""
 from django.http import HttpResponseServerError
-from django.db.models import Count
+from django.db.models import Count, Q
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
@@ -15,9 +15,10 @@ class GameView(ViewSet):
         Returns:
             Response -- JSON serialized game type
         """
+        gamer = Gamer.objects.get(user=request.auth.user)
         try:
             game = Game.objects.annotate(
-                event_count=Count('events')).get(pk=pk)
+                event_count=Count('events'), user_event_count=Count('events', filter=Q(events__organizer=gamer))).get(pk=pk)
             serializer = GameSerializer(game)
             return Response(serializer.data)
         except Game.DoesNotExist as ex:
@@ -28,7 +29,9 @@ class GameView(ViewSet):
         Returns:
             Response -- JSON serialized list of game types
         """
-        games = Game.objects.annotate(event_count=Count('events'))
+        gamer = Gamer.objects.get(user=request.auth.user)
+        games = Game.objects.annotate(event_count=Count(
+            'events'), user_event_count=Count('events', filter=Q(events__organizer=gamer)))
 
         game_type = request.query_params.get('type', None)
         if game_type is not None:
@@ -91,6 +94,7 @@ class GameSerializer(serializers.ModelSerializer):
     """JSON serializer for game types
     """
     event_count = serializers.IntegerField(default=None)
+    user_event_count = serializers.IntegerField(default=None)
 
     class Meta:
         model = Game
@@ -102,6 +106,7 @@ class GameSerializer(serializers.ModelSerializer):
             'title',
             'number_of_players',
             'skill_level',
-            'event_count'
+            'event_count',
+            'user_event_count'
         )
         depth = 1
