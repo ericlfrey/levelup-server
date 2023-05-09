@@ -50,17 +50,10 @@ class EventView(ViewSet):
             Response -- JSON serialized event instance
         """
         organizer = Gamer.objects.get(user=request.auth.user)
-        game = Game.objects.get(pk=request.data["game"])
-
-        event = Event.objects.create(
-            description=request.data["description"],
-            date=request.data["date"],
-            time=request.data["time"],
-            organizer=organizer,
-            game=game
-        )
-        serializer = EventSerializer(event)
-        return Response(serializer.data)
+        serializer = CreateEventSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(organizer=organizer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, pk):
         """Handle PUT requests for an event
@@ -102,6 +95,19 @@ class EventView(ViewSet):
         event = Event.objects.get(pk=pk)
         event.attendees.remove(gamer)
         return Response({'message': 'Gamer removed'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class CreateEventSerializer(serializers.ModelSerializer):
+    """JSON Serializer to create event"""
+    class Meta:
+        model = Event
+        fields = [
+            'id',
+            'description',
+            'date',
+            'time',
+            'game'
+        ]
 
 
 class EventSerializer(serializers.ModelSerializer):
