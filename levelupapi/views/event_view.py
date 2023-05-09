@@ -1,6 +1,7 @@
 """View module for handling requests about event types"""
 from django.http import HttpResponseServerError
 from django.db.models import Count
+from django.db.models import Q
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -30,15 +31,15 @@ class EventView(ViewSet):
             Response -- JSON serialized list of event types
         """
 
-        events = Event.objects.annotate(attendees_count=Count('attendees'))
+        gamer = Gamer.objects.get(user=request.auth.user)
+        events = Event.objects.annotate(attendees_count=Count(
+            'attendees'), joined=Count('attendees', filter=Q(attendees=gamer)))
         if "game" in request.query_params:
             events = events.filter(
                 game_id=request.query_params['game'])
 
-        gamer = Gamer.objects.get(user=request.auth.user)
-
-        for event in events:
-            event.joined = gamer in event.attendees.all()
+        # for event in events:
+        #     event.joined = gamer in event.attendees.all()
         serializer = EventSerializer(events, many=True)
         return Response(serializer.data)
 
