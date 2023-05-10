@@ -26,7 +26,7 @@
     "pk": 3,
     "fields": {
       "organizer": 1,
-      "game": 3,
+      "game": 2,
       "description": "We are going to play Codewars",
       "date": "2023-05-05",
       "time": "17:00"
