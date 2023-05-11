@@ -75,38 +75,35 @@ class EventTests(APITestCase):
         self.assertEqual(json_response["date"], "2023-05-23")
         self.assertEqual(json_response["time"], "17:15:00")
 
-    # def test_change_game(self):
-    #     """
-    #     Ensure we can change an existing game.
-    #     """
-    #     game = Game()
-    #     game.gametype_id = 1
-    #     game.skill_level = 5
-    #     game.title = "Sorry"
-    #     game.maker = "Milton Bradley"
-    #     game.number_of_players = 4
-    #     game.gamer_id = 1
-    #     game.save()
+    def test_change_event(self):
+        """
+        Ensure we can change an existing game.
+        """
+        event = Event()
+        event.game_id = 1
+        event.organizer_id = 1
+        event.description = "Lorem Ipsum"
+        event.date = "2023-05-23"
+        event.time = "17:15"
+        event.save()
 
-    #     # DEFINE NEW PROPERTIES FOR GAME
-    #     data = {
-    #         "gameTypeId": 1,
-    #         "skillLevel": 2,
-    #         "title": "Sorry",
-    #         "maker": "Hasbro",
-    #         "numberOfPlayers": 4
-    #     }
+        # DEFINE NEW PROPERTIES FOR Event
+        data = {
+            "game": 1,
+            "description": "new description",
+            "date": "2023-05-24",
+            "time": "17:17"
+        }
 
-    #     response = self.client.put(f"/games/{game.id}", data, format="json")
-    #     self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        response = self.client.put(f"/events/{event.id}", data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-    #     # GET game again to verify changes were made
-    #     response = self.client.get(f"/games/{game.id}")
-    #     json_response = json.loads(response.content)
+        # GET game again to verify changes were made
+        response = self.client.get(f"/events/{event.id}")
+        json_response = json.loads(response.content)
 
-    #     # Assert that the properties are correct
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(json_response["title"], "Sorry")
-    #     self.assertEqual(json_response["maker"], "Hasbro")
-    #     self.assertEqual(json_response["skill_level"], 2)
-    #     self.assertEqual(json_response["number_of_players"], 4)
+        # Assert that the properties are correct
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json_response["description"], "new description")
+        self.assertEqual(json_response["date"], "2023-05-24")
+        self.assertEqual(json_response["time"], "17:17:00")
