@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>LevelUp Reports</title>
+  </head>
+  <body>
+    <h1>User Events</h1>
+
+    {% for user in userevent_list %}
+    <h2>{{ user.full_name }}</h2>
+    {% for event in user.events %}
+    <ul>
+      <li>
+        <p>Game: {{ event.game_name }}</p>
+        <p>Date: {{ event.date }}</p>
+        <p>Time: {{ event.time }}</p>
+      </li>
+    </ul>
+    {% endfor %} {% endfor %}
+  </body>
+</html>
