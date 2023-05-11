@@ -107,3 +107,23 @@ class EventTests(APITestCase):
         self.assertEqual(json_response["description"], "new description")
         self.assertEqual(json_response["date"], "2023-05-24")
         self.assertEqual(json_response["time"], "17:17:00")
+
+    def test_delete_event(self):
+        """
+        Ensure we can delete an existing event.
+        """
+        event = Event()
+        event.game_id = 1
+        event.organizer_id = 1
+        event.description = "Lorem Ipsum"
+        event.date = "2023-05-23"
+        event.time = "17:15"
+        event.save()
+
+        # DELETE the game you just created
+        response = self.client.delete(f"/events/{event.id}")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # GET the game again to verify you get a 404 response
+        response = self.client.get(f"/events/{event.id}")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
