@@ -12,52 +12,21 @@ class UserGameList(View):
 
             # TODO: Write a query to get all games along with the gamer first name, last name, and id
             db_cursor.execute("""
-            SELECT 
-                g.id,
-                g.title,
-                g.maker,
-                g.skill_level,
-                g.number_of_players,
-                g.game_type_id,
-                u.first_name || ' ' || u.last_name AS full_name,
-                ga.id gamer_id
-            FROM levelupapi_gamer ga
-            JOIN auth_user u 
-                ON u.id = ga.user_id 
-            JOIN levelupapi_game g 
-                ON g.gamer_id = ga.id
+            SELECT
+                id,
+                title,
+                maker,
+                game_type_id,
+                number_of_players,
+                skill_level,
+                user_id,
+                full_name,
+                gamer_id
+            FROM
+                GAMES_BY_USER
             """)
             # Pass the db_cursor to the dict_fetch_all function to turn the fetch_all() response into a dictionary
             dataset = dict_fetch_all(db_cursor)
-
-            # Take the flat data from the dataset, and build the
-            # following data structure for each gamer.
-            # This will be the structure of the games_by_user list:
-            #
-            # [
-            #   {
-            #     "id": 1,
-            #     "full_name": "Admina Straytor",
-            #     "games": [
-            #       {
-            #         "id": 1,
-            #         "title": "Foo",
-            #         "maker": "Bar Games",
-            #         "skill_level": 3,
-            #         "number_of_players": 4,
-            #         "game_type_id": 2
-            #       },
-            #       {
-            #         "id": 2,
-            #         "title": "Foo 2",
-            #         "maker": "Bar Games 2",
-            #         "skill_level": 3,
-            #         "number_of_players": 4,
-            #         "game_type_id": 2
-            #       }
-            #     ]
-            #   },
-            # ]
 
             games_by_user = []
 

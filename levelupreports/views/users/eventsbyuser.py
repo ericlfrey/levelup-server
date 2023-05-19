@@ -12,60 +12,21 @@ class UserEventList(View):
 
             db_cursor.execute("""
             SELECT 
-                ga.id gamer_id,
-                u.first_name || ' ' || u.last_name AS full_name,
-                e.id,
-                e.date,
-                e.time,
-                g.title game_name
-            FROM levelupapi_gamer ga
-            JOIN auth_user u 
-                ON u.id = ga.user_id 
-            JOIN levelupapi_event_attendees ea
-                ON ea.gamer_id = ga.id
-            JOIN levelupapi_event e
-                ON e.id = ea.event_id
-            JOIN levelupapi_game g
-                ON g.id = e.game_id
+                id,
+                date,
+                time,
+                game_name,
+                gamer_id,
+                full_name
+            FROM
+                EVENTS_BY_USER
             """)
             # Pass the db_cursor to the dict_fetch_all function to turn the fetch_all() response into a dictionary
             dataset = dict_fetch_all(db_cursor)
 
-            # Take the flat data from the dataset, and build the
-            # following data structure for each gamer.
-            # This will be the structure of the games_by_user list:
-            #
-            # [
-            #   {
-            #     "id": 1,
-            #     "full_name": "Admina Straytor",
-            #     "games": [
-            #       {
-            #         "id": 1,
-            #         "title": "Foo",
-            #         "maker": "Bar Games",
-            #         "skill_level": 3,
-            #         "number_of_players": 4,
-            #         "game_type_id": 2
-            #       },
-            #       {
-            #         "id": 2,
-            #         "title": "Foo 2",
-            #         "maker": "Bar Games 2",
-            #         "skill_level": 3,
-            #         "number_of_players": 4,
-            #         "game_type_id": 2
-            #       }
-            #     ]
-            #   },
-            # ]
-
             events_by_user = []
 
             for row in dataset:
-                # TODO: Create a dictionary called game that includes
-                # the name, description, number_of_players, maker,
-                # game_type_id, and skill_level from the row dictionary
                 event = {
                     "id": row['id'],
                     "date": row['date'],
